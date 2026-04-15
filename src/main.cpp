@@ -14,7 +14,7 @@
  * output will be ["SET", "foo", "bar"]
  *
  */
-std::vector<std::string> parse_command(int client_fd, std::vector<char> &buffer, int &read_pos)
+std::vector<std::string> parse_command(const std::vector<char> &buffer, size_t &read_pos)
 {
     // Resulting vector of command parts
     std::vector<std::string> parts;
