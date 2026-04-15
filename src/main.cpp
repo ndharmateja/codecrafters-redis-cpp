@@ -57,7 +57,7 @@ std::vector<std::string> parse_command(const std::vector<char> &buffer, size_t &
         curr_pos += 2;
 
         // Parse num_chars number of characters as the part in the range [curr_pos, curr_pos + num_chars)
-        std::string part(buffer.data() + curr_pos, buffer.data() + curr_pos + num_chars);
+        std::string part(buffer.data() + curr_pos, num_chars);
         parts.push_back(part);
 
         // curr_pos has to be incremented by 'num_chars + 2' to account for the \r\n at the end of the part
