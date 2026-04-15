@@ -10,6 +10,26 @@
 #include <vector>
 
 /**
+ * Clears everything before the read_pos and resets read_pos to 0
+ * Copies everything in [read_pos, buffer_end_pos) to [0: buffer_end_pos - read_pos)
+ *
+ * Assumes that buffer_end_pos >= read_pos
+ */
+void clear_buffer(std::vector<char> &buffer, size_t &read_pos, size_t &buffer_end_pos)
+{
+    // We can use std::memmove to move the bytes from [read_pos, buffer_end_pos) to [0: buffer_end_pos - read_pos)
+    size_t remaining_bytes = buffer_end_pos - read_pos;
+
+    // Move data if there are bytes to move
+    if (remaining_bytes > 0)
+        std::memmove(buffer.data(), buffer.data() + read_pos, remaining_bytes);
+
+    // Update the new positions
+    buffer_end_pos = remaining_bytes;
+    read_pos = 0;
+}
+
+/**
  * For now returns if there are atleast 14 chars in the buffer
  */
 bool has_atleast_one_command(std::vector<char> &buffer, size_t &read_pos, const size_t &buffer_end_pos)
