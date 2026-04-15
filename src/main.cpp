@@ -7,6 +7,42 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <vector>
+
+/**
+ * For now returns if there are atleast 14 chars in the buffer
+ */
+bool has_atleast_one_command(std::vector<char> &buffer, size_t &read_pos, const size_t &buffer_end_pos)
+{
+    return buffer_end_pos - read_pos >= 14;
+}
+
+bool receive_one_command(int client_fd, std::vector<char> &buffer, size_t &read_pos, size_t &buffer_end_pos)
+{
+    // Receive bytes until there is atleast one command in the buffer
+    while (!has_atleast_one_command(buffer, read_pos, buffer_end_pos))
+    {
+        int num_bytes = recv(client_fd, buffer.data() + buffer_end_pos, buffer.size() - buffer_end_pos, 0);
+
+        // If the client closes, then number of bytes received would be 0
+        if (num_bytes == 0)
+            return false;
+
+        // If the num bytes is -1, there is an error
+        // TODO: error handling
+        // For now we are returning an empty command
+        if (num_bytes < 0)
+            return false;
+
+        // If the num_bytes > 0, we received some bytes. so we update curr_pos and
+        // check if we have one command
+        buffer_end_pos += num_bytes;
+    }
+
+    // At this point we have atleast one command in the buffer starting at read_pos
+    return true;
+}
+
 /**
  * read_pos is the start of the bytes of the redis command
  *
