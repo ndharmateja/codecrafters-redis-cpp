@@ -152,16 +152,45 @@ int main(int argc, char **argv)
     // You can use print statements as follows for debugging, they'll be visible when running tests.
     std::cout << "Logs from your program will appear here!\n";
 
-    // Accept a client connection
-    int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
-    std::cout << "Client connected\n";
+    // Create the buffer
+    std::vector<char> buffer(1024);
+    size_t read_pos = 0;
+    size_t buffer_end_pos = 0;
 
-    // Create and send back the response
-    const char *data = "+PONG\r\n";
-    send(client_fd, data, strlen(data), 0);
+    // Run the indefinite loop
+    while (true)
+    {
+        // Accept a client connection
+        int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
+        std::cout << "Client connected\n";
 
-    // Close the sockets
-    close(client_fd);
+        // Handle commands indefinitely
+        while (true)
+        {
+            // If receive_one_command returns false, it means that either there is an error
+            // or the client closed the connection
+            if (!receive_one_command(client_fd, buffer, read_pos, buffer_end_pos))
+                break;
+
+            // Parse the command
+            std::vector<std::string> command = parse_command(buffer, read_pos);
+
+            // Print the command received
+            for (const std::string &part : command)
+                std::cout << part << " ";
+            std::cout << std::endl;
+
+            // Create and send back the response
+            const char *data = "+PONG\r\n";
+            send(client_fd, data, strlen(data), 0);
+        }
+
+        // Close the client connection
+        close(client_fd);
+    }
+
+    // Close the client socket
+    // Close the server listening socket
     close(server_fd);
 
     return 0;
