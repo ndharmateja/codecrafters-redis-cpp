@@ -20,7 +20,7 @@ std::vector<std::string> parse_command(const std::vector<char> &buffer, size_t &
     std::vector<std::string> parts;
 
     // Start parsing the command bytes at read_pos
-    int curr_pos = read_pos;
+    size_t curr_pos = read_pos;
 
     // If the first byte is not a *, we can raise an error
     if (buffer[curr_pos++] != '*')
@@ -28,7 +28,7 @@ std::vector<std::string> parse_command(const std::vector<char> &buffer, size_t &
 
     // Parse the number words in the command using Horner's method
     unsigned char c;
-    int num_words = 0;
+    size_t num_words = 0;
     while (std::isdigit((c = buffer[curr_pos])))
     {
         num_words = num_words * 10 + (c - '0');
@@ -46,7 +46,7 @@ std::vector<std::string> parse_command(const std::vector<char> &buffer, size_t &
             throw std::domain_error("Invalid command bytes");
 
         // Parse the number of chars in the current part in the same way as above
-        int num_chars = 0;
+        size_t num_chars = 0;
         while (std::isdigit((c = buffer[curr_pos])))
         {
             num_chars = num_chars * 10 + (c - '0');
