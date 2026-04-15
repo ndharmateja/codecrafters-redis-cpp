@@ -42,14 +42,14 @@ std::vector<std::string> parse_command(const std::vector<char> &buffer, size_t &
     for (size_t i = 0; i < num_words; i++)
     {
         // If curr_pos is not a $ we can raise an error
-        if (buffer[curr_pos++] != '*')
+        if (buffer[curr_pos++] != '$')
             throw std::domain_error("Invalid command bytes");
 
         // Parse the number of chars in the current part in the same way as above
         int num_chars = 0;
         while (std::isdigit((c = buffer[curr_pos])))
         {
-            num_words = num_words * 10 + (c - '0');
+            num_chars = num_chars * 10 + (c - '0');
             curr_pos++;
         }
 
