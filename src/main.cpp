@@ -56,9 +56,15 @@ int main(int argc, char **argv)
     std::cout << "Logs from your program will appear here!\n";
 
     // Accept a client connection
-    accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
+    int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
     std::cout << "Client connected\n";
 
+    // Create and send back the response
+    const char *data = "+PONG\r\n";
+    send(client_fd, data, strlen(data), 0);
+
+    // Close the sockets
+    close(client_fd);
     close(server_fd);
 
     return 0;
