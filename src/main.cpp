@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <vector>
+#include <thread>
 
 /**
  * Clears everything before the read_pos and resets read_pos to 0
@@ -216,8 +217,9 @@ int main(int argc, char **argv)
         int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
         std::cout << "Client connected\n";
 
-        // Handle the client
-        handle_client(client_fd);
+        // Handle each client on a different thread and detach the thread
+        std::thread t(handle_client, client_fd);
+        t.detach();
     }
 
     // Close the client socket
