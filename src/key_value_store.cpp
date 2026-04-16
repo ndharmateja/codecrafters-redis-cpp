@@ -12,7 +12,7 @@ KeyValueStore &KeyValueStore::get_instance()
 std::optional<std::string> KeyValueStore::get_value(const std::string &key) const
 {
     // Lock mutex
-    // std::lock_guard<std::mutex> lock(db_mutex);
+    std::lock_guard<std::mutex> lock(db_mutex);
 
     // Find and return the corresponding value if key exists
     auto it = map.find(key);
@@ -29,7 +29,7 @@ std::optional<std::string> KeyValueStore::get_value(const std::string &key) cons
 void KeyValueStore::set_value(const std::string &key, const std::string &value)
 {
     // Lock mutex
-    // std::lock_guard<std::mutex> lock(db_mutex);
+    std::lock_guard<std::mutex> lock(db_mutex);
 
     // Set the key:value
     map[key] = value;
