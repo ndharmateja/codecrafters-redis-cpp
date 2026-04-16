@@ -7,3 +7,5 @@
 ## TODOs
 1. Event loop instead of multi threading.
 2. Add classes for the buffer, handling parsing command.
+3. Start parsing the command directly and receive bytes if the command is not complete, add logic for dynamic resizing of the buffer like dynamic arrays if the current buffer is not large enough for the commands.
+   - CommandBuffer class
