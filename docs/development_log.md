@@ -23,7 +23,7 @@
 - 15 Apr 2026: run each client connection in a different thread to support concurrent clients
 - 15 Apr 2026: implement a robust command parser to parse arrays of bulk strings
 - 16 Apr 2026: engineer a custom Buffer class with dynamic resizing, capacity management and to handle raw byte streams
-- 16 Apr 2026: encapsulated the client code into a Client class
+- 16 Apr 2026: encapsulate the client code into a Client class
 - 16 Apr 2026: implement the KeyValueStore using the Meyer's Singleton pattern with an mutex inside it
 - 16 Apr 2026: handle case insensitivity of the commands
 - 16 Apr 2026: add support for ECHO, SET and GET commands
