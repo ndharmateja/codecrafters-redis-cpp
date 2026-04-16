@@ -7,7 +7,7 @@
 3. Singleton pattern for the KeyValueStore class
 
 ## TODOs
-- [ ] Event loop instead of multi threading.
+- [ ] Event loop instead of multi threading as threads won't scale to 10k concurrent clients.
 - [x] Add Client class.
 - [ ] Add Buffer class.
     - [ ] doubling and halving logic and compact logic and who calls who
