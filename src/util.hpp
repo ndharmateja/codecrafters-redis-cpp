@@ -92,17 +92,16 @@ std::vector<std::string> parse_command(Buffer &buf)
 
         // Parse num_chars number of characters as the part in the range [curr_pos, curr_pos + num_chars)
         std::string part(reinterpret_cast<char *>(buf.get_pointer(curr_pos)), num_chars);
-
-        // Convert each part into lower case and add it to the vector
-        // In-place conversion to lowercase
-        std::transform(part.begin(), part.end(), part.begin(),
-                       [](unsigned char c)
-                       { return std::tolower(c); });
         parts.push_back(part);
 
         // curr_pos has to be incremented by 'num_chars + 2' to account for the \r\n at the end of the part
         curr_pos += (num_chars + 2);
     }
+
+    // Convert the command (index 0 in the vector to lower case)
+    std::transform(parts[0].begin(), parts[0].end(), parts[0].begin(),
+                   [](unsigned char c)
+                   { return std::tolower(c); });
 
     // Update the read_pos cursor to curr_pos and return the command parts
     buf.set_read_pos(curr_pos);
