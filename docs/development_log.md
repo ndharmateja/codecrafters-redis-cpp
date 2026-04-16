@@ -6,7 +6,8 @@
 
 ## TODOs
 - [ ] Event loop instead of multi threading.
-- [ ] Add Client class.
-- [x] Add Buffer class.
+- [x] Add Client class.
+- [ ] Add Buffer class.
+    - [ ] doubling and halving logic and compact logic and who calls who
 - [ ] Add CommandParser class.
-- [ ] Start parsing the command directly and receive bytes if the command is not complete, add logic for dynamic resizing of the buffer like dynamic arrays if the current buffer is not large enough for the commands.
+    - [ ] Start parsing the command directly and receive bytes if the command is not complete, add logic for dynamic resizing of the buffer like dynamic arrays if the current buffer is not large enough for the commands.
