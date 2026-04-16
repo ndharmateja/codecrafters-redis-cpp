@@ -13,6 +13,11 @@ bool receive_one_command(int client_fd, Buffer &buf)
     // Receive bytes until there is atleast one command in the buffer
     while (!has_atleast_one_command(buf))
     {
+        // If buffer is full, we increase the capacity
+        if (buf.is_full())
+            buf.increase_capacity();
+
+        // Receive bytes
         int num_bytes = recv(client_fd, buf.get_write_pointer(), buf.get_free_space(), 0);
 
         // If the client closes, then number of bytes received would be 0
