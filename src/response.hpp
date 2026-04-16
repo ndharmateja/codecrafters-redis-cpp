@@ -34,6 +34,8 @@ public:
         response.append("\r\n");
         return response;
     }
+
+    static std::string create_null_bulk_string() { return "$-1\r\n"; };
 };
 
 #endif
