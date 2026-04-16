@@ -22,13 +22,37 @@ void Client::run()
         std::vector<std::string> command = parse_command(buf);
 
         // Print the command received
-        for (const std::string &part : command)
-            std::cout << part << " ";
+        std::cout << "Command: ";
+        print_vector(command);
         std::cout << std::endl;
 
         // Create and send back the response
-        const char *data = "+PONG\r\n";
-        send(fd, data, strlen(data), 0);
+        std::string response;
+
+        // Handle PING command
+        if (command.front() == "PING")
+            response.append("+PONG\r\n");
+
+        // Handle ECHO command with one argument
+        // Send response back as a RESP bulk string
+        else if (command.front() == "ECHO")
+        {
+            response.append("$");
+            response.append(std::to_string(command[1].length()));
+            response.append("\r\n");
+            response.append(command[1]);
+            response.append("\r\n");
+        }
+
+        // All other commands are unsupported
+        else
+            response.append("-Invalid/unsupported command\r\n");
+
+        // Send the response
+        std::cout << "Raw response: '";
+        print_escaped(response);
+        std::cout << "'" << std::endl;
+        send(fd, response.data(), response.length(), 0);
 
         // After handling each command, compact the buffer with potentially
         // removing the already processed bytes
