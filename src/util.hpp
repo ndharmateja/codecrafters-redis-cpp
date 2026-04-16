@@ -2,6 +2,8 @@
 #include <sys/socket.h>
 
 #include "buffer.hpp"
+#include <algorithm>
+#include <cctype>
 
 /**
  * For now returns if there are atleast 14 chars in the buffer
@@ -90,6 +92,12 @@ std::vector<std::string> parse_command(Buffer &buf)
 
         // Parse num_chars number of characters as the part in the range [curr_pos, curr_pos + num_chars)
         std::string part(reinterpret_cast<char *>(buf.get_pointer(curr_pos)), num_chars);
+
+        // Convert each part into lower case and add it to the vector
+        // In-place conversion to lowercase
+        std::transform(part.begin(), part.end(), part.begin(),
+                       [](unsigned char c)
+                       { return std::tolower(c); });
         parts.push_back(part);
 
         // curr_pos has to be incremented by 'num_chars + 2' to account for the \r\n at the end of the part
