@@ -4,6 +4,7 @@
 #include "client.hpp"
 #include "util.hpp"
 #include "response.hpp"
+#include "key_value_store.hpp"
 
 // Constructor and destructor
 Client::Client(int client_fd) : fd{client_fd}, buf{1024} {}
@@ -40,6 +41,26 @@ void Client::run()
             response.append(Response::create_bulk_string(command[1]));
 
         // Handle SET command
+        else if (command.front() == "set")
+        {
+            KeyValueStore &store = KeyValueStore::get_instance();
+            store.set_value(command[1], command[2]);
+            response.append(Response::create_simple_string("OK"));
+        }
+
+        // Handle GET command
+        else if (command.front() == "get")
+        {
+            KeyValueStore &store = KeyValueStore::get_instance();
+            std::optional<std::string> result = store.get_value(command[1]);
+
+            // If value exists, we send that corresponding value otherwise
+            // we send the null string back
+            response.append(
+                result.has_value()
+                    ? Response::create_bulk_string(result.value())
+                    : Response::create_null_string());
+        }
 
         // All other commands are unsupported
         else
