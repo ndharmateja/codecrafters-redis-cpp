@@ -33,7 +33,7 @@ void Client::run()
 
         // Handle PING command
         if (command.front() == "ping")
-            response.append(Response::create_bulk_string("PONG"));
+            response.append(Response::create_simple_string("PONG"));
 
         // Handle ECHO command with one argument
         // Send response back as a RESP bulk string
