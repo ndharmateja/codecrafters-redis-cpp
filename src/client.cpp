@@ -59,7 +59,7 @@ void Client::run()
             response.append(
                 result.has_value()
                     ? Response::create_bulk_string(result.value())
-                    : Response::create_null_string());
+                    : Response::create_null_bulk_string());
         }
 
         // All other commands are unsupported
