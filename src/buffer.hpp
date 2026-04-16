@@ -22,6 +22,7 @@ public:
     bool is_full() const;
     unsigned char *get_write_pointer();
     unsigned char *get_pointer(size_t index);
+    const unsigned char *get_pointer(size_t index) const;
 
     // Update methods
     void increment_write_pos(size_t n);

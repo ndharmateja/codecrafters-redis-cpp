@@ -10,6 +10,7 @@ bool Buffer::is_full() const { return write_pos == buffer.size(); }
 
 unsigned char *Buffer::get_write_pointer() { return buffer.data() + write_pos; }
 unsigned char *Buffer::get_pointer(size_t index) { return buffer.data() + index; }
+const unsigned char *Buffer::get_pointer(size_t index) const { return buffer.data() + index; }
 
 void Buffer::increment_write_pos(size_t n) { write_pos += n; }
 void Buffer::set_read_pos(size_t new_read_pos) { read_pos = new_read_pos; }
