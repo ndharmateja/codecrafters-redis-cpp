@@ -7,7 +7,7 @@ class Buffer
 {
 private:
     // Constants
-    static const size_t MIN_CAPACITY = 1024;
+    static const size_t MIN_CAPACITY;
 
     // Instance variables
     std::vector<unsigned char> buffer;

@@ -1,6 +1,9 @@
 #include <algorithm>
 #include "buffer.hpp"
 
+// Constants
+const size_t Buffer::MIN_CAPACITY = 1024;
+
 Buffer::Buffer(size_t initial_size)
     : buffer(std::max(MIN_CAPACITY, initial_size)), read_pos{0}, write_pos{0} {}
 
