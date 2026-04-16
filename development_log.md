@@ -5,4 +5,5 @@
       - clear vs resize: with resize, we could use string_view but with clear, we are maintaining a fixed size buffer
 
 ## TODOs
-1. Event loop instead of multi threading
+1. Event loop instead of multi threading.
+2. Add classes for the buffer, handling parsing command.
