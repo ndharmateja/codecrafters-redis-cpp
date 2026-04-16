@@ -18,6 +18,7 @@ public:
     // Getters
     size_t get_read_pos() const;
     size_t get_write_pos() const;
+    size_t get_free_space() const;
     unsigned char *get_write_pointer();
     unsigned char *get_pointer(size_t index);
 
