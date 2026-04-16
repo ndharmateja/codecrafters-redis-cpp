@@ -6,6 +6,7 @@ Buffer::Buffer(int initial_size) : buffer(initial_size), read_pos{0}, write_pos{
 size_t Buffer::get_read_pos() const { return read_pos; }
 size_t Buffer::get_write_pos() const { return write_pos; }
 size_t Buffer::get_free_space() const { return buffer.size() - write_pos; }
+bool Buffer::is_full() const { return write_pos == buffer.size(); }
 
 unsigned char *Buffer::get_write_pointer() { return buffer.data() + write_pos; }
 unsigned char *Buffer::get_pointer(size_t index) { return buffer.data() + index; }
@@ -30,6 +31,8 @@ void Buffer::compact()
     write_pos = remaining_bytes;
     read_pos = 0;
 }
+
+void Buffer::increase_capacity() { buffer.resize(buffer.size() * 2); }
 
 unsigned char &Buffer::operator[](size_t index) { return buffer[index]; }
 const unsigned char &Buffer::operator[](size_t index) const { return buffer[index]; }

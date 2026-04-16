@@ -19,6 +19,7 @@ public:
     size_t get_read_pos() const;
     size_t get_write_pos() const;
     size_t get_free_space() const;
+    bool is_full() const;
     unsigned char *get_write_pointer();
     unsigned char *get_pointer(size_t index);
 
@@ -33,6 +34,7 @@ public:
      * Assumes that write_pos >= read_pos
      */
     void compact();
+    void increase_capacity();
 
     // [] operator
     // The first one is for write and the next one is for read
