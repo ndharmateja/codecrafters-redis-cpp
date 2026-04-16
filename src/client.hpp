@@ -2,13 +2,13 @@
 #define CLIENT_HPP
 
 #include <vector>
+#include "buffer.hpp"
 
 class Client
 {
 private:
     int fd;
-    std::vector<char> buffer;
-    size_t read_pos, buffer_end_pos;
+    Buffer buf;
 
 public:
     // Constructor and destructor

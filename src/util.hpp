@@ -1,40 +1,19 @@
 #include <vector>
 #include <sys/socket.h>
 
-/**
- * Clears everything before the read_pos and resets read_pos to 0
- * Copies everything in [read_pos, buffer_end_pos) to [0: buffer_end_pos - read_pos)
- *
- * Assumes that buffer_end_pos >= read_pos
- */
-void clear_buffer(std::vector<char> &buffer, size_t &read_pos, size_t &buffer_end_pos)
-{
-    // We can use std::memmove to move the bytes from [read_pos, buffer_end_pos) to [0: buffer_end_pos - read_pos)
-    size_t remaining_bytes = buffer_end_pos - read_pos;
-
-    // Move data if there are bytes to move
-    if (remaining_bytes > 0)
-        std::memmove(buffer.data(), buffer.data() + read_pos, remaining_bytes);
-
-    // Update the new positions
-    buffer_end_pos = remaining_bytes;
-    read_pos = 0;
-}
+#include "buffer.hpp"
 
 /**
  * For now returns if there are atleast 14 chars in the buffer
  */
-bool has_atleast_one_command(std::vector<char> &buffer, size_t &read_pos, const size_t &buffer_end_pos)
-{
-    return buffer_end_pos - read_pos >= 14;
-}
+bool has_atleast_one_command(const Buffer &buf) { return buf.get_write_pos() - buf.get_read_pos() >= 14; }
 
-bool receive_one_command(int client_fd, std::vector<char> &buffer, size_t &read_pos, size_t &buffer_end_pos)
+bool receive_one_command(int client_fd, Buffer &buf)
 {
     // Receive bytes until there is atleast one command in the buffer
-    while (!has_atleast_one_command(buffer, read_pos, buffer_end_pos))
+    while (!has_atleast_one_command(buf))
     {
-        int num_bytes = recv(client_fd, buffer.data() + buffer_end_pos, buffer.size() - buffer_end_pos, 0);
+        int num_bytes = recv(client_fd, buf.get_write_pointer(), buf.get_free_space(), 0);
 
         // If the client closes, then number of bytes received would be 0
         if (num_bytes == 0)
@@ -48,7 +27,7 @@ bool receive_one_command(int client_fd, std::vector<char> &buffer, size_t &read_
 
         // If the num_bytes > 0, we received some bytes. so we update curr_pos and
         // check if we have one command
-        buffer_end_pos += num_bytes;
+        buf.increment_write_pos(num_bytes);
     }
 
     // At this point we have atleast one command in the buffer starting at read_pos
@@ -62,22 +41,22 @@ bool receive_one_command(int client_fd, std::vector<char> &buffer, size_t &read_
  * output will be ["SET", "foo", "bar"]
  *
  */
-std::vector<std::string> parse_command(const std::vector<char> &buffer, size_t &read_pos)
+std::vector<std::string> parse_command(Buffer &buf)
 {
     // Resulting vector of command parts
     std::vector<std::string> parts;
 
     // Start parsing the command bytes at read_pos
-    size_t curr_pos = read_pos;
+    size_t curr_pos = buf.get_read_pos();
 
     // If the first byte is not a *, we can raise an error
-    if (buffer[curr_pos++] != '*')
+    if (buf[curr_pos++] != '*')
         throw std::domain_error("Invalid command bytes");
 
     // Parse the number words in the command using Horner's method
     unsigned char c;
     size_t num_words = 0;
-    while (std::isdigit((c = buffer[curr_pos])))
+    while (std::isdigit((c = buf[curr_pos])))
     {
         num_words = num_words * 10 + (c - '0');
         curr_pos++;
@@ -90,12 +69,12 @@ std::vector<std::string> parse_command(const std::vector<char> &buffer, size_t &
     for (size_t i = 0; i < num_words; i++)
     {
         // If curr_pos is not a $ we can raise an error
-        if (buffer[curr_pos++] != '$')
+        if (buf[curr_pos++] != '$')
             throw std::domain_error("Invalid command bytes");
 
         // Parse the number of chars in the current part in the same way as above
         size_t num_chars = 0;
-        while (std::isdigit((c = buffer[curr_pos])))
+        while (std::isdigit((c = buf[curr_pos])))
         {
             num_chars = num_chars * 10 + (c - '0');
             curr_pos++;
@@ -105,7 +84,7 @@ std::vector<std::string> parse_command(const std::vector<char> &buffer, size_t &
         curr_pos += 2;
 
         // Parse num_chars number of characters as the part in the range [curr_pos, curr_pos + num_chars)
-        std::string part(buffer.data() + curr_pos, num_chars);
+        std::string part(reinterpret_cast<char *>(buf.get_pointer(curr_pos)), num_chars);
         parts.push_back(part);
 
         // curr_pos has to be incremented by 'num_chars + 2' to account for the \r\n at the end of the part
@@ -113,6 +92,6 @@ std::vector<std::string> parse_command(const std::vector<char> &buffer, size_t &
     }
 
     // Update the read_pos cursor to curr_pos and return the command parts
-    read_pos = curr_pos;
+    buf.set_read_pos(curr_pos);
     return parts;
 }

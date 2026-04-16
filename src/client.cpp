@@ -5,7 +5,7 @@
 #include "util.hpp"
 
 // Constructor and destructor
-Client::Client(int client_fd) : fd{client_fd}, buffer(1024), read_pos{0}, buffer_end_pos{0} {}
+Client::Client(int client_fd) : fd{client_fd}, buf{1024} {}
 Client::~Client() { close(fd); }
 
 void Client::run()
@@ -15,11 +15,11 @@ void Client::run()
     {
         // If receive_one_command returns false, it means that either there is an error
         // or the client closed the connection
-        if (!receive_one_command(fd, buffer, read_pos, buffer_end_pos))
+        if (!receive_one_command(fd, buf))
             break;
 
         // Parse the command
-        std::vector<std::string> command = parse_command(buffer, read_pos);
+        std::vector<std::string> command = parse_command(buf);
 
         // Print the command received
         for (const std::string &part : command)
@@ -30,9 +30,8 @@ void Client::run()
         const char *data = "+PONG\r\n";
         send(fd, data, strlen(data), 0);
 
-        // After handling each command,
-        // if more than half the buffer is full, we clear it
-        if (read_pos >= buffer.size() / 2)
-            clear_buffer(buffer, read_pos, buffer_end_pos);
+        // After handling each command, compact the buffer with potentially
+        // removing the already processed bytes
+        buf.compact();
     }
 }
