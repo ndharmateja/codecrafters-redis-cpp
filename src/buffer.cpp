@@ -1,6 +1,8 @@
+#include <algorithm>
 #include "buffer.hpp"
 
-Buffer::Buffer(int initial_size) : buffer(initial_size), read_pos{0}, write_pos{0} {}
+Buffer::Buffer(size_t initial_size)
+    : buffer(std::max(MIN_CAPACITY, initial_size)), read_pos{0}, write_pos{0} {}
 
 // Instance methods
 size_t Buffer::get_read_pos() const { return read_pos; }

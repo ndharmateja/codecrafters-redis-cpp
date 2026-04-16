@@ -6,13 +6,17 @@
 class Buffer
 {
 private:
+    // Constants
+    static const size_t MIN_CAPACITY = 1024;
+
+    // Instance variables
     std::vector<unsigned char> buffer;
     size_t read_pos;
     size_t write_pos;
 
 public:
     // Constructor
-    Buffer(int initial_size);
+    Buffer(size_t initial_size);
 
     // Instance methods
     // Getters
