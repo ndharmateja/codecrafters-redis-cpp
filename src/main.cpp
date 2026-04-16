@@ -125,6 +125,38 @@ std::vector<std::string> parse_command(const std::vector<char> &buffer, size_t &
     return parts;
 }
 
+void handle_client(int client_fd)
+{
+    // Create the buffer
+    std::vector<char> buffer(1024);
+    size_t read_pos = 0;
+    size_t buffer_end_pos = 0;
+
+    // Handle commands indefinitely
+    while (true)
+    {
+        // If receive_one_command returns false, it means that either there is an error
+        // or the client closed the connection
+        if (!receive_one_command(client_fd, buffer, read_pos, buffer_end_pos))
+            break;
+
+        // Parse the command
+        std::vector<std::string> command = parse_command(buffer, read_pos);
+
+        // Print the command received
+        for (const std::string &part : command)
+            std::cout << part << " ";
+        std::cout << std::endl;
+
+        // Create and send back the response
+        const char *data = "+PONG\r\n";
+        send(client_fd, data, strlen(data), 0);
+    }
+
+    // Close the client connection
+    close(client_fd);
+}
+
 int main(int argc, char **argv)
 {
     // Flush after every std::cout / std::cerr
@@ -172,11 +204,6 @@ int main(int argc, char **argv)
     // You can use print statements as follows for debugging, they'll be visible when running tests.
     std::cout << "Logs from your program will appear here!\n";
 
-    // Create the buffer
-    std::vector<char> buffer(1024);
-    size_t read_pos = 0;
-    size_t buffer_end_pos = 0;
-
     // Run the indefinite loop
     while (true)
     {
@@ -184,29 +211,8 @@ int main(int argc, char **argv)
         int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
         std::cout << "Client connected\n";
 
-        // Handle commands indefinitely
-        while (true)
-        {
-            // If receive_one_command returns false, it means that either there is an error
-            // or the client closed the connection
-            if (!receive_one_command(client_fd, buffer, read_pos, buffer_end_pos))
-                break;
-
-            // Parse the command
-            std::vector<std::string> command = parse_command(buffer, read_pos);
-
-            // Print the command received
-            for (const std::string &part : command)
-                std::cout << part << " ";
-            std::cout << std::endl;
-
-            // Create and send back the response
-            const char *data = "+PONG\r\n";
-            send(client_fd, data, strlen(data), 0);
-        }
-
-        // Close the client connection
-        close(client_fd);
+        // Handle the client
+        handle_client(client_fd);
     }
 
     // Close the client socket
