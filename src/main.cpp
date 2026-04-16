@@ -151,6 +151,11 @@ void handle_client(int client_fd)
         // Create and send back the response
         const char *data = "+PONG\r\n";
         send(client_fd, data, strlen(data), 0);
+
+        // After handling each command,
+        // if more than half the buffer is full, we clear it
+        if (read_pos >= buffer.size() / 2)
+            clear_buffer(buffer, read_pos, buffer_end_pos);
     }
 
     // Close the client connection
