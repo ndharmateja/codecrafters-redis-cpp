@@ -129,6 +129,8 @@ std::vector<std::string> parse_command(const std::vector<char> &buffer, size_t &
 void handle_client(int client_fd)
 {
     // Create the buffer
+    // We need a different buffer for each client. So it is a automatic
+    // stack variable inside the thread.
     std::vector<char> buffer(1024);
     size_t read_pos = 0;
     size_t buffer_end_pos = 0;
