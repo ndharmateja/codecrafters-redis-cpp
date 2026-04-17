@@ -5,6 +5,11 @@
       - clear vs resize: with resize, we could use string_view but with clear, we are maintaining a fixed size buffer
 2. Threads with mutex in the KeyValueStore class itself
 3. Singleton pattern for the KeyValueStore class
+4. Command and Factory method patterns for the hierarchy of commands
+5. Passive expiry for the set and get commands
+   - We store the expiry timestamp for each key whenever there is an expiry and when we try to get a key after expiry, we delete the key and return nil.
+   - Not active expiry because it would require a thread per key to delete after a certain time
+   - Another idea to consider is a periodic cleaning of the expired keys but it might block the mutex for too long
 
 ## TODOs
 - [ ] Event loop instead of multi threading as threads won't scale to 10k concurrent clients.
