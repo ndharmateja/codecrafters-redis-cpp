@@ -25,3 +25,10 @@ class BufferOutOfBoundsError : public RedisError
 public:
     BufferOutOfBoundsError() : RedisError("Client connection error.") {}
 };
+
+class InvalidCommandStructureError : public RedisError
+{
+public:
+    explicit InvalidCommandStructureError(const std::string &msg)
+        : RedisError(msg) {}
+};
