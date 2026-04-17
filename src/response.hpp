@@ -12,6 +12,7 @@ private:
     // the output of add_item in the create_bulk_string etc
     static std::string &add_item(std::string &response, const std::string &item) { return response.append(item).append(CRLF); }
     static std::string &add_item(std::string &response, size_t item) { return response.append(std::to_string(item)).append(CRLF); }
+    static std::string &add_item(std::string &response, int item) { return response.append(std::to_string(item)).append(CRLF); }
 
 public:
     static std::string create_bulk_string(const std::string &input)
@@ -34,6 +35,12 @@ public:
     }
 
     static std::string create_null_bulk_string() { return "$-1\r\n"; };
+
+    static std::string create_integer_string(int x)
+    {
+        std::string response{":"};
+        return add_item(response, x);
+    };
 };
 
 #endif
