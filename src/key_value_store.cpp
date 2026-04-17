@@ -20,7 +20,7 @@ std::optional<std::string> KeyValueStore::get_value(const std::string &key)
         return std::nullopt;
 
     // If no expiry or hasn't expired yet, we just return the value
-    const RedisValueObject &value = it->second;
+    const RedisValueObject<std::string> &value = it->second;
     if (!value.get_expiry_time().has_value() || *(value.get_expiry_time()) > std::chrono::steady_clock::now())
         return value.get_value();
 
