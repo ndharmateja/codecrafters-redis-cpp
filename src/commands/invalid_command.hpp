@@ -9,7 +9,7 @@
 class InvalidCommand : public Command
 {
 public:
-    explicit InvalidCommand(const std::vector<std::string> &command_parts) {}
+    explicit InvalidCommand() {}
 
     std::string execute() override { return Response::create_simple_error("Invalid/unsupported command"); }
 };

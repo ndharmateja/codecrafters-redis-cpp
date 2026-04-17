@@ -18,7 +18,7 @@ public:
     {
         // Handle PING command
         if (command_parts.front() == "ping")
-            return std::make_unique<PingCommand>();
+            return std::make_unique<PingCommand>(command_parts);
 
         // Handle ECHO command with one argument
         // Send response back as a RESP bulk string
