@@ -3,6 +3,7 @@
 
 #include <optional>
 #include <vector>
+#include <strings.h>
 #include "command.hpp"
 #include "../response.hpp"
 #include "../errors.hpp"
