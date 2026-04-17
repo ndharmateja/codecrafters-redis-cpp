@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include <algorithm>
 
 #include "buffer.hpp"
 #include "command_parser.hpp"
