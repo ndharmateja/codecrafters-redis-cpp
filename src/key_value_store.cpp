@@ -32,13 +32,19 @@ std::optional<std::string> KeyValueStore::get_value(const std::string &key)
     // In all cases of error, key found and not found
 }
 
-void KeyValueStore::set_value(const std::string &key, const std::string &value)
+void KeyValueStore::set_value(const std::string &key, const std::string &value, std::optional<long long> expiry_in_ms)
 {
+    // Store the expiry time as a timestamp
+    std::optional<timestamp> expiry;
+    if (expiry_in_ms.has_value())
+        // 2. Add duration to current time
+        expiry = std::chrono::steady_clock::now() + std::chrono::milliseconds(*expiry_in_ms);
+
     // Lock mutex
     std::lock_guard<std::mutex> lock(db_mutex);
 
     // Set the key:value
-    map[key] = value;
+    map.insert_or_assign(key, RedisValueObject(value, expiry));
 
     // The mutex is automatically unlocked here (RAII)
     // In all cases of error, key found and not found
