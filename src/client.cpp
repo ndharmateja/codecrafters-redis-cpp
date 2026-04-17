@@ -52,10 +52,6 @@ void Client::run()
             print_escaped(response);
             std::cout << "'" << std::endl;
             send(fd, response.data(), response.length(), 0);
-
-            // After handling each command, compact the buffer with potentially
-            // removing the already processed bytes
-            buf.compact();
         }
         catch (const ClientConnectionError &e)
         {
