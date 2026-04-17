@@ -10,12 +10,12 @@
 - [ ] Event loop instead of multi threading as threads won't scale to 10k concurrent clients.
 - [x] Add Client class.
 - [ ] Add Buffer class.
-    - [ ] doubling and halving logic and compact logic and who calls who
+    - [x] doubling and halving logic and compact logic and who calls who
     - [ ] limit checks before updating read_pos and write_pos and curr_pos
     - [ ] add explanations and invariants about read_pos, curr_pos and write_pos
-- [ ] Add CommandParser class.
+- [x] Add CommandParser class.
     - [ ] Start parsing the command directly and receive bytes if the command is not complete, add logic for dynamic resizing of the buffer like dynamic arrays if the current buffer is not large enough for the commands.
-    - [ ] if \r\n is not found should we loop or if to receive bytes? If loop, how many times because the command could be in an invalid format.
+    - [x] if \r\n is not found should we loop or if to receive bytes? If loop, how many times because the command could be in an invalid format.
     - [ ] repeating logic in has_one_command and parse_command of CommandParser class and make modular functions
     - [ ] handle -1 from the command for null arrays and null strings
 - [x] Command hierarchy of classes and factory pattern
