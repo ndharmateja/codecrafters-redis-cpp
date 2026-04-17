@@ -26,6 +26,9 @@ public:
     size_t get_write_pos() const { return write_pos; }
     unsigned char get_curr_char() const;
 
+    bool has_bytes_from_curr(size_t num_bytes) { return write_pos - curr_pos >= num_bytes; }
+    bool is_curr_in_bounds() { return curr_pos < write_pos; }
+
     // Instance methods about space
     size_t get_free_bytes() const { return buffer.size() - write_pos; }
     size_t has_free_bytes(size_t num_bytes) const { return buffer.size() - write_pos >= num_bytes; }
@@ -38,6 +41,10 @@ public:
 
     // Update methods
     void increment_write_pos(size_t n) { write_pos += n; }
+
+    // TODO: add error handling
+    void increment_curr_pos(size_t n) { curr_pos += n; }
+    void increment_curr_pos() { curr_pos++; }
     void set_read_pos(size_t new_read_pos) { read_pos = new_read_pos; }
     /**
      * Resets the curr_pos to the read_pos
