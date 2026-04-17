@@ -18,42 +18,61 @@ void Client::run()
     // Handle commands indefinitely
     while (true)
     {
-        // If a full command isn't present in the buffer, we keep receiving more
-        // bytes until there is one command in the buffer.
-        // If there is an error while receiving bytes from the client, the receive_bytes
-        // will throw an error and if the client closes the connection, we exit run.
-        // If the command structure is invalid, has_one_command throws an error
-        while (!CommandParser::has_one_command(buf))
-            // If receive_bytes returns false, it means that client closed the connection
-            // in which case we can exit the run method
-            if (!receive_bytes())
-                return;
+        try
+        {
+            // If a full command isn't present in the buffer, we keep receiving more
+            // bytes until there is one command in the buffer.
+            // If there is an error while receiving bytes from the client, the receive_bytes
+            // will throw an error and if the client closes the connection, we exit run.
+            // If the command structure is invalid, has_one_command throws an error
+            while (!CommandParser::has_one_command(buf))
+                // If receive_bytes returns false, it means that client closed the connection
+                // in which case we can exit the run method
+                if (!receive_bytes())
+                    return;
 
-        // At this point there is atleast one valid full command in the buffer
-        // Parse the command
-        std::vector<std::string> command = CommandParser::parse_command(buf);
+            // At this point there is atleast one valid full command in the buffer
+            // Parse the command
+            std::vector<std::string> command = CommandParser::parse_command(buf);
 
-        // Print the command received
-        std::cout << "Command: ";
-        print_vector(command);
-        std::cout << std::endl;
+            // Print the command received
+            std::cout << "Command: ";
+            print_vector(command);
+            std::cout << std::endl;
 
-        // Create and send back the response
-        std::string response;
+            // Create and send back the response
+            std::string response;
 
-        // Create command and response
-        std::unique_ptr<Command> cmd = CommandFactory::create_command(command);
-        response = cmd->execute();
+            // Create command and response
+            std::unique_ptr<Command> cmd = CommandFactory::create_command(command);
+            response = cmd->execute();
 
-        // Send the response
-        std::cout << "Raw response: '";
-        print_escaped(response);
-        std::cout << "'" << std::endl;
-        send(fd, response.data(), response.length(), 0);
+            // Send the response
+            std::cout << "Raw response: '";
+            print_escaped(response);
+            std::cout << "'" << std::endl;
+            send(fd, response.data(), response.length(), 0);
 
-        // After handling each command, compact the buffer with potentially
-        // removing the already processed bytes
-        buf.compact();
+            // After handling each command, compact the buffer with potentially
+            // removing the already processed bytes
+            buf.compact();
+        }
+        catch (const ClientConnectionError &e)
+        {
+            std::cout << "Client disconnected" << std::endl;
+            return;
+        }
+        catch (const RedisError &e)
+        {
+            std::string error_resp = Response::create_simple_error(e.what());
+            std::cout << "Error parsing command: " << e.what() << std::endl;
+            send(fd, error_resp.data(), error_resp.length(), 0);
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Unexpected system error: " << e.what() << std::endl;
+            return;
+        }
     }
 }
 
