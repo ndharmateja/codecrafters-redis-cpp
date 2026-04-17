@@ -15,6 +15,9 @@ public:
     Client(int);
     ~Client();
 
+    // Getters
+    Buffer &get_buf() { return buf; }
+
     // Instance methods
     void run();
 };
