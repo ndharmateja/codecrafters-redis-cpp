@@ -32,6 +32,16 @@ public:
     void increment_write_pos(size_t n);
     void set_read_pos(size_t new_read_pos);
 
+    // Find methods
+    /**
+     * Finds and returns the index of the first occurrence of key
+     * in the buffer starting from start_index
+     *
+     * Runs in O(nk)
+     * where n: length of the buffer and k: length of the key
+     */
+    int find(std::string key, size_t start_index = 0);
+
     /**
      * Clears everything before the read_pos and resets read_pos to 0
      * Copies everything in [read_pos, write_pos) to [0: write_pos - read_pos)

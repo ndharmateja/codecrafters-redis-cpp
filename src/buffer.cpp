@@ -21,6 +21,29 @@ const unsigned char *Buffer::get_pointer(size_t index) const { return buffer.dat
 void Buffer::increment_write_pos(size_t n) { write_pos += n; }
 void Buffer::set_read_pos(size_t new_read_pos) { read_pos = new_read_pos; }
 
+int Buffer::find(std::string key, size_t start_index)
+{
+    size_t key_size = key.length();
+    for (size_t i = start_index; i < write_pos - key_size; i++)
+    {
+        // Check if buffer[i: i + key_size) is the same as key
+        bool is_match = true;
+        for (size_t j = 0; j < key_size; j++)
+            if (buffer[i + j] != key[j])
+            {
+                is_match = false;
+                break;
+            }
+
+        // If it is a match, we can return i
+        if (is_match)
+            return i;
+    }
+
+    // If we reach here, then it means that there is no match
+    return -1;
+}
+
 void Buffer::compact()
 {
     // Only compact the buffer if more than half of the buffer is occupied
