@@ -16,6 +16,7 @@
 - [ ] Add CommandParser class.
     - [ ] Start parsing the command directly and receive bytes if the command is not complete, add logic for dynamic resizing of the buffer like dynamic arrays if the current buffer is not large enough for the commands.
     - [ ] if \r\n is not found should we loop or if to receive bytes? If loop, how many times because the command could be in an invalid format.
+    - [ ] repeating logic in has_one_command and parse_command of CommandParser class
 - [ ] Command hierarchy of classes and factory pattern
 - [ ] std::move for strings in get_value and set_value etc
 - [ ] use Rabin-Karp/KMP/Boyer-Moore algo for find in buf
