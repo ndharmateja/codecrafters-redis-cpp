@@ -2,6 +2,7 @@
 #define BUFFER_HPP
 
 #include <vector>
+#include <string>
 
 class Buffer
 {
