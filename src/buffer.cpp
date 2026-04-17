@@ -6,7 +6,10 @@
 const size_t Buffer::MIN_CAPACITY = 1024;
 
 Buffer::Buffer(size_t initial_size)
-    : buffer(std::max(MIN_CAPACITY, initial_size)), read_pos{0}, write_pos{0} {}
+    : buffer(std::max(MIN_CAPACITY, initial_size)),
+      read_pos{0},
+      curr_pos{0},
+      write_pos{0} {}
 
 // Instance methods
 size_t Buffer::get_read_pos() const { return read_pos; }
@@ -53,8 +56,9 @@ void Buffer::compact()
     if (remaining_bytes > 0)
         std::memmove(buffer.data(), buffer.data() + read_pos, remaining_bytes);
 
-    // Update the new positions
-    write_pos = remaining_bytes;
+    // Update the new positions, every pos moves read_pos indices to the left
+    write_pos -= read_pos;
+    curr_pos -= read_pos;
     read_pos = 0;
 }
 

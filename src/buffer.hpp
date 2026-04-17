@@ -12,6 +12,7 @@ private:
     // Instance variables
     std::vector<unsigned char> buffer;
     size_t read_pos;
+    size_t curr_pos;
     size_t write_pos;
 
 public:
@@ -21,6 +22,7 @@ public:
     // Instance methods
     // Getters
     size_t get_read_pos() const;
+    size_t get_curr_pos() const { return curr_pos; }
     size_t get_write_pos() const;
     size_t get_free_space() const;
     bool is_full() const;
@@ -31,6 +33,11 @@ public:
     // Update methods
     void increment_write_pos(size_t n);
     void set_read_pos(size_t new_read_pos);
+    /**
+     * Resets the curr_pos to the read_pos
+     */
+    void reset_curr_pos() { curr_pos = read_pos; }
+    void set_curr_pos(size_t new_curr_pos) { curr_pos = new_curr_pos; }
 
     // Find methods
     /**
