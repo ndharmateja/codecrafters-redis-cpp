@@ -1,5 +1,5 @@
-#ifndef DATABASE_HPP
-#define DATABASE_HPP
+#ifndef KEY_VALUE_STORE_HPP
+#define KEY_VALUE_STORE_HPP
 
 #include <unordered_map>
 #include <mutex>
