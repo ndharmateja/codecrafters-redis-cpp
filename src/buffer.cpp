@@ -11,26 +11,12 @@ Buffer::Buffer(size_t initial_size)
       curr_pos{0},
       write_pos{0} {}
 
-// Instance methods
-size_t Buffer::get_read_pos() const { return read_pos; }
-size_t Buffer::get_write_pos() const { return write_pos; }
-size_t Buffer::get_free_bytes() const { return buffer.size() - write_pos; }
-
 unsigned char Buffer::get_curr_char() const
 {
     if (curr_pos >= write_pos)
         throw std::domain_error("Current position is greater than write position");
     return buffer[curr_pos];
 }
-
-bool Buffer::is_full() const { return write_pos == buffer.size(); }
-
-unsigned char *Buffer::get_write_pointer() { return buffer.data() + write_pos; }
-unsigned char *Buffer::get_pointer(size_t index) { return buffer.data() + index; }
-const unsigned char *Buffer::get_pointer(size_t index) const { return buffer.data() + index; }
-
-void Buffer::increment_write_pos(size_t n) { write_pos += n; }
-void Buffer::set_read_pos(size_t new_read_pos) { read_pos = new_read_pos; }
 
 int Buffer::find(std::string key, size_t start_index)
 {
@@ -69,8 +55,3 @@ void Buffer::compact()
     curr_pos -= read_pos;
     read_pos = 0;
 }
-
-void Buffer::increase_capacity() { buffer.resize(buffer.size() * 2); }
-
-unsigned char &Buffer::operator[](size_t index) { return buffer[index]; }
-const unsigned char &Buffer::operator[](size_t index) const { return buffer[index]; }
