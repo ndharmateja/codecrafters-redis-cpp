@@ -12,11 +12,11 @@ KeyValueStore &KeyValueStore::get_instance()
 std::optional<std::string> KeyValueStore::get_value(const std::string &key)
 {
     // Lock mutex
-    std::lock_guard<std::mutex> lock(db_mutex);
+    std::lock_guard<std::mutex> lock(str_map_mutex);
 
     // Find and return the corresponding value if key exists
-    auto it = map.find(key);
-    if (it == map.end())
+    auto it = str_value_map.find(key);
+    if (it == str_value_map.end())
         return std::nullopt;
 
     // If no expiry or hasn't expired yet, we just return the value
@@ -25,7 +25,7 @@ std::optional<std::string> KeyValueStore::get_value(const std::string &key)
         return value.get_value();
 
     // If expired, we delete the value from the db and return nullopt
-    map.erase(it);
+    str_value_map.erase(it);
     return std::nullopt;
 
     // The mutex is automatically unlocked here (RAII)
@@ -41,10 +41,10 @@ void KeyValueStore::set_value(const std::string &key, const std::string &value, 
         expiry = std::chrono::steady_clock::now() + std::chrono::milliseconds(*expiry_in_ms);
 
     // Lock mutex
-    std::lock_guard<std::mutex> lock(db_mutex);
+    std::lock_guard<std::mutex> lock(str_map_mutex);
 
     // Set the key:value
-    map.insert_or_assign(key, RedisValueObject(value, expiry));
+    str_value_map.insert_or_assign(key, RedisValueObject(value, expiry));
 
     // The mutex is automatically unlocked here (RAII)
     // In all cases of error, key found and not found

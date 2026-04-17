@@ -33,12 +33,12 @@ class KeyValueStore
     // in the future we expand it for lists etc
     // Which is why we are encapsulating in a DB class
 private:
-    std::unordered_map<std::string, RedisValueObject<std::string>> map;
+    std::unordered_map<std::string, RedisValueObject<std::string>> str_value_map;
 
     // We make the mutex mutable so that we can use const getters
     // even though we are technically changing the mutex during the get
     // method
-    mutable std::mutex db_mutex;
+    mutable std::mutex str_map_mutex;
 
     // Private constructor for singleton pattern
     KeyValueStore() {}
