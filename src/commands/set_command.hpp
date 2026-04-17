@@ -20,7 +20,7 @@ public:
     explicit SetCommand(const std::vector<std::string> &command_parts)
     {
         // Parse key and value
-        if (command_parts.size() != 3 || command_parts.size() != 5)
+        if (command_parts.size() != 3 && command_parts.size() != 5)
             throw InvalidCommandStructureError("SET should have exactly 3 or 5 parts.");
         key = command_parts[1];
         value = command_parts[2];
