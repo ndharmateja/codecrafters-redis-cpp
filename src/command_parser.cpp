@@ -3,6 +3,93 @@
 
 #include "buffer.hpp"
 #include "command_parser.hpp"
+#include "errors.hpp"
+
+static int validate_is_digit(Buffer &buf, std::string message = "Missing digit.")
+{
+    unsigned char c;
+    if (!std::isdigit((c = buf.get_curr_char())))
+        throw CommandParseError(message);
+    buf.increment_curr_pos();
+    return c - '0';
+}
+
+static void validate_char(Buffer &buf, unsigned char c, std::string message = "Invalid character.")
+{
+    if (buf.get_curr_char() != c)
+        throw CommandParseError(message);
+    buf.increment_curr_pos();
+}
+
+static void validate_crlf(Buffer &buf, std::string message = "Missing \\r\\n.")
+{
+    validate_char(buf, '\r', message);
+    validate_char(buf, '\n', message);
+}
+
+bool CommandParser::has_one_command(Buffer &buf)
+{
+    try
+    {
+        // If first character is not * then we throw error
+        buf.reset_curr_pos();
+        validate_char(buf, '*', "Missing '*' at the start.");
+
+        // Parse the number of words using Horner's method
+        // If the next char is not a digit, it is invalid
+        unsigned char c;
+        int num_words = validate_is_digit(buf, "Missing number after '*'.");
+
+        // Parse all the digits
+        while (std::isdigit((c = buf.get_curr_char())))
+        {
+            num_words = (num_words * 10) + (c - '0');
+            buf.increment_curr_pos();
+        }
+
+        // The next two chars have to be \r and \n
+        validate_crlf(buf, "Missing \\r\\n after the number of words.");
+
+        // No we should have num_words number of parts of the form
+        // $<num_chars>\r\n<word>\r\n
+        for (size_t i = 0; i < num_words; i++)
+        {
+            // The first char should be '$'
+            validate_char(buf, '$', "Missing '$'.");
+
+            // Parse the number of chars in the word using Horner's method
+            // If the next char is not a digit, it is invalid
+            int num_chars = validate_is_digit(buf, "Missing number after '$'.");
+
+            // Parse all the digits
+            while (std::isdigit((c = buf.get_curr_char())))
+            {
+                num_chars = (num_chars * 10) + (c - '0');
+                buf.increment_curr_pos();
+            }
+
+            // The next two chars have to be \r and \n
+            validate_crlf(buf, "Missing \\r\\n after the number of chars.");
+
+            // The next num_chars number of chars can be anything
+            for (size_t j = 0; j < num_chars; j++)
+                buf.increment_curr_pos();
+
+            // The next two chars have to be \r and \n
+            validate_crlf(buf, "Missing \\r\\n after the number of chars.");
+        }
+    }
+    // If we are catching a buffer out of bounds error, it means
+    // that we have reached the end of the current bytes in the buffer
+    // so we don't have the command
+    catch (const BufferOutOfBoundsError &e)
+    {
+        return false;
+    }
+
+    // If we reach here, it means there is atleast one valid command
+    return true;
+}
 
 std::vector<std::string> CommandParser::parse_command(Buffer &buf)
 {

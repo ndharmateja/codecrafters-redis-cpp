@@ -26,7 +26,7 @@ public:
      *
      * throws error if the format is invalid
      */
-    static bool has_one_command(Buffer &buf) { return buf.get_write_pos() - buf.get_read_pos() >= 14; }
+    static bool has_one_command(Buffer &buf);
 };
 
 #endif
