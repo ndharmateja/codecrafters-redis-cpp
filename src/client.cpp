@@ -81,6 +81,7 @@ bool Client::receive_bytes()
 
         // we have this if statement nested so that in general cases we don't have to do
         // 2 separate if checks
+        // If we still don't have 128 bytes even after compacting, we resize
         if (!buf.has_free_bytes(128))
             buf.increase_capacity();
     }
