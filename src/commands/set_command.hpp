@@ -46,6 +46,9 @@ public:
             throw InvalidCommandStructureError("Arg for EX/PX should be a number.");
         }
 
+        if (expiry_in_ms.value() <= 0)
+            throw InvalidCommandStructureError("Expiry time must be a positive integer.");
+
         // If EX, then multiply the time by 1000 to get it in ms
         if (strcasecmp("EX", command_parts[3].c_str()))
             expiry_in_ms = expiry_in_ms.value() * 1000;
