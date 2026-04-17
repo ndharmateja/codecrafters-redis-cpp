@@ -28,6 +28,7 @@
 - [ ] use Rabin-Karp/KMP/Boyer-Moore algo for find in buf
 - [x] add a curr_pos variable in the buffer class itself so that we can compact and resize while even parsing a command
 - [x] error flow when client connection closes or error. bool or throw. custom errors.
+- [ ] send might not send all bytes. sendall to loop and send all the bytes.
 
 ## Changelog
 - 15 Apr 2026: add single threaded client
