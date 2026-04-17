@@ -53,8 +53,10 @@ public:
     // Instance methods
     // Using the const & is okay for the keys and values as
     // when we are inserting them into the map, deep copies of the strings would be created
-    std::optional<std::string> get_value(const std::string &key) const;
-    void set_value(const std::string &key, const std::string &value);
+    std::optional<std::string> get_value(const std::string &key);
+    void set_value(const std::string &key,
+                   const std::string &value,
+                   std::optional<long long> expiry_in_ms);
 };
 
 #endif
