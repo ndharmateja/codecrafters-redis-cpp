@@ -19,3 +19,9 @@ public:
     explicit CommandParseError(const std::string &msg)
         : RedisError("Protocol Error: " + msg) {}
 };
+
+class BufferOutOfBoundsError : public RedisError
+{
+public:
+    BufferOutOfBoundsError() : RedisError("Client connection error.") {}
+};
