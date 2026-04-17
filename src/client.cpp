@@ -7,6 +7,7 @@
 #include "key_value_store.hpp"
 #include "command_parser.hpp"
 #include "errors.hpp"
+#include "commands/command_factory.hpp"
 
 // Constructor and destructor
 Client::Client(int client_fd) : fd{client_fd}, buf{1024} {}

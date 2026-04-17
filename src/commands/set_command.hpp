@@ -4,6 +4,9 @@
 #include <optional>
 #include <vector>
 #include "command.hpp"
+#include "../response.hpp"
+#include "../errors.hpp"
+#include "../key_value_store.hpp"
 
 class SetCommand : public Command
 {

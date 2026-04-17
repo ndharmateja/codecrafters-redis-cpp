@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "command.hpp"
+#include "../response.hpp"
 
 class InvalidCommand : public Command
 {
