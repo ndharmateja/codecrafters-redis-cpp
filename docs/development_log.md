@@ -18,11 +18,11 @@
     - [ ] if \r\n is not found should we loop or if to receive bytes? If loop, how many times because the command could be in an invalid format.
     - [ ] repeating logic in has_one_command and parse_command of CommandParser class and make modular functions
     - [ ] handle -1 from the command for null arrays and null strings
-- [ ] Command hierarchy of classes and factory pattern
+- [x] Command hierarchy of classes and factory pattern
 - [ ] std::move for strings in get_value and set_value etc
 - [ ] use Rabin-Karp/KMP/Boyer-Moore algo for find in buf
 - [x] add a curr_pos variable in the buffer class itself so that we can compact and resize while even parsing a command
-- [ ] error flow when client connection closes or error. bool or throw. custom errors.
+- [x] error flow when client connection closes or error. bool or throw. custom errors.
 
 ## Changelog
 - 15 Apr 2026: add single threaded client
