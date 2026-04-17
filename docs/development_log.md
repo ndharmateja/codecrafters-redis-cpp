@@ -34,3 +34,7 @@
 - 16 Apr 2026: implement the KeyValueStore using the Meyer's Singleton pattern with an mutex inside it
 - 16 Apr 2026: handle case insensitivity of the commands
 - 16 Apr 2026: add support for ECHO, SET and GET commands
+- 17 Apr 2026: refactor the utility methods into a CommandParser class
+- 17 Apr 2026: add custom application errors
+- 17 Apr 2026: implement Factory Method and Command design patterns for creating commands
+- 17 Apr 2026: implement expiry functionality for the set and get commands
