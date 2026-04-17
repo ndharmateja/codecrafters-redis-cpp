@@ -4,16 +4,16 @@
 #include <stdexcept>
 #include <string>
 
-class RedisError : public std::runtime_error
+class ApplicationError : public std::runtime_error
 {
 public:
     using std::runtime_error::runtime_error;
 };
 
-class ClientConnectionError : public RedisError
+class RedisError : public ApplicationError
 {
 public:
-    ClientConnectionError() : RedisError("Client connection error.") {}
+    RedisError(const std::string &msg) : ApplicationError(msg) {}
 };
 
 class CommandParseError : public RedisError
@@ -23,17 +23,24 @@ public:
         : RedisError("Protocol Error: " + msg) {}
 };
 
-class BufferOutOfBoundsError : public RedisError
-{
-public:
-    BufferOutOfBoundsError() : RedisError("Buffer out of bounds error.") {}
-};
-
 class InvalidCommandStructureError : public RedisError
 {
 public:
     explicit InvalidCommandStructureError(const std::string &msg)
         : RedisError(msg) {}
+};
+
+// Non redis errors
+class ClientConnectionError : public RedisError
+{
+public:
+    ClientConnectionError() : RedisError("Client connection error.") {}
+};
+
+class BufferOutOfBoundsError : public RedisError
+{
+public:
+    BufferOutOfBoundsError() : RedisError("Buffer out of bounds error.") {}
 };
 
 #endif
