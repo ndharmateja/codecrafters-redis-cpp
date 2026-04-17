@@ -46,10 +46,6 @@ int Buffer::find(std::string key, size_t start_index)
 
 void Buffer::compact()
 {
-    // Only compact the buffer if more than half of the buffer is occupied
-    if (buffer.size() - write_pos >= buffer.size() / 2)
-        return;
-
     // We can use std::memmove to move the bytes from [read_pos, write_pos) to [0: write_pos - read_pos)
     size_t remaining_bytes = write_pos - read_pos;
 
