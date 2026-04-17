@@ -8,6 +8,7 @@
 #include "ping_command.hpp"
 #include "set_command.hpp"
 #include "get_command.hpp"
+#include "rpush_command.hpp"
 #include "invalid_command.hpp"
 #include "echo_command.hpp"
 
@@ -32,6 +33,10 @@ public:
         // Handle GET command
         else if (command_parts.front() == "get")
             return std::make_unique<GetCommand>(command_parts);
+
+        // Handle RPUSH command
+        else if (command_parts.front() == "rpush")
+            return std::make_unique<RpushCommand>(command_parts);
 
         // All other commands are unsupported
         else
