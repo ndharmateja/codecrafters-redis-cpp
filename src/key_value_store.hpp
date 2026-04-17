@@ -4,22 +4,39 @@
 #include <unordered_map>
 #include <mutex>
 #include <string>
+#include <variant>
+#include <deque>
 #include <optional>
 
 typedef std::chrono::steady_clock::time_point timestamp;
+typedef std::variant<std::string, std::deque<std::string>> RedisData;
 
-template <typename T>
 class RedisValueObject
 {
 private:
-    T value;
+    RedisData data;
     std::optional<timestamp> expiry_time;
 
 public:
-    RedisValueObject(T value, std::optional<timestamp> expiry)
-        : value{value}, expiry_time{expiry} {}
-    T get_value() const { return value; }
+    RedisValueObject(RedisData value, std::optional<timestamp> expiry)
+        : data{value}, expiry_time{expiry} {}
+
+    RedisData &get_data_mutable() { return data; }
+    const RedisData &get_data() const { return data; }
     std::optional<timestamp> get_expiry_time() const { return expiry_time; };
+
+    // type checking
+    bool is_string() const { return std::holds_alternative<std::string>(data); }
+    bool is_deque() const { return std::holds_alternative<std::deque<std::string>>(data); }
+
+    // Expiry
+    bool has_expiry() const { return expiry_time.has_value(); }
+
+    /**
+     * Assumes that there is an expiry
+     * Use it with has_expiry()
+     */
+    bool has_expired() const { return *(expiry_time) < std::chrono::steady_clock::now(); }
 };
 
 /**
@@ -33,12 +50,12 @@ class KeyValueStore
     // in the future we expand it for lists etc
     // Which is why we are encapsulating in a DB class
 private:
-    std::unordered_map<std::string, RedisValueObject<std::string>> str_value_map;
+    std::unordered_map<std::string, RedisValueObject> db_map;
 
     // We make the mutex mutable so that we can use const getters
     // even though we are technically changing the mutex during the get
     // method
-    mutable std::mutex str_map_mutex;
+    mutable std::mutex db_mutex;
 
     // Private constructor for singleton pattern
     KeyValueStore() {}
@@ -58,6 +75,11 @@ public:
     void set_value(const std::string &key,
                    const std::string &value,
                    std::optional<long long> expiry_in_ms);
+
+    // List methods
+    int push_back_list_value(const std::string &key,
+                             const std::string &value,
+                             std::optional<long long> expiry_in_ms = std::nullopt);
 };
 
 #endif
