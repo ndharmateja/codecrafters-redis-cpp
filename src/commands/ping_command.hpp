@@ -12,8 +12,8 @@ class PingCommand : public Command
 public:
     explicit PingCommand(const std::vector<std::string> &command_parts)
     {
-        if (command_parts.size() != 2)
-            throw InvalidCommandStructureError("Echo command should have exactly 2 parts.");
+        if (command_parts.size() != 1)
+            throw InvalidCommandStructureError("PING command should have exactly 1 part.");
     }
 
     std::string execute() override { return Response::create_simple_string("PONG"); }
