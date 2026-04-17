@@ -11,17 +11,18 @@ class CommandParser
 {
 public:
     /**
-     * read_pos is the start of the bytes of the redis command
+     * Parses the command bytes into a vector of command parts using the
+     * RESP protocol assuming that the input bytes is an array of bulk strings.
+     * It starts parsing from the read_pos of the buffer.
      *
      * If input is bytes: *3\r\n$3\r\nSET\r\n$3\r\nfoo\r\n$3\r\nbar\r\n
      * output will be ["SET", "foo", "bar"]
-     *
      */
     static std::vector<std::string> parse_command(Buffer &buf);
 
     /**
      * Validates and returns if there is atleast one valid command in the
-     * buffer starting at its currpos
+     * buffer starting at its read_pos.
      *
      * throws error if the format is invalid
      */
