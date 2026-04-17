@@ -99,9 +99,7 @@ std::vector<std::string> CommandParser::parse_command(Buffer &buf)
     // Start parsing the command bytes at read_pos
     buf.reset_curr_pos();
 
-    // If the first byte is not a *, we can raise an error
-    if (buf.get_curr_char() != '*')
-        throw std::domain_error("Invalid command bytes");
+    // First byte is '*'
     buf.increment_curr_pos();
 
     // Parse the number words in the command using Horner's method
@@ -119,9 +117,7 @@ std::vector<std::string> CommandParser::parse_command(Buffer &buf)
     // Loop over the number of words and parse each word
     for (size_t i = 0; i < num_words; i++)
     {
-        // If curr_pos is not a $ we can raise an error
-        if (buf.get_curr_char() != '$')
-            throw std::domain_error("Invalid command bytes");
+        // This byte is '$'
         buf.increment_curr_pos();
 
         // Parse the number of chars in the current part in the same way as above
