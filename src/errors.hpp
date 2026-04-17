@@ -1,3 +1,6 @@
+#ifndef ERRORS_HPP
+#define ERRORS_HPP
+
 #include <stdexcept>
 #include <string>
 
@@ -32,3 +35,5 @@ public:
     explicit InvalidCommandStructureError(const std::string &msg)
         : RedisError(msg) {}
 };
+
+#endif
