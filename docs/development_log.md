@@ -11,12 +11,13 @@
 - [x] Add Client class.
 - [ ] Add Buffer class.
     - [ ] doubling and halving logic and compact logic and who calls who
-    - [ ] limit checks before updating read_pos and write_pos
+    - [ ] limit checks before updating read_pos and write_pos and curr_pos
 - [ ] Add CommandParser class.
     - [ ] Start parsing the command directly and receive bytes if the command is not complete, add logic for dynamic resizing of the buffer like dynamic arrays if the current buffer is not large enough for the commands.
 - [ ] Command hierarchy of classes and factory pattern
 - [ ] std::move for strings in get_value and set_value etc
 - [ ] use Rabin-Karp/KMP/Boyer-Moore algo for find in buf
+- [ ] add a curr_pos variable in the buffer class itself so that we can compact and resize while even parsing a command
 
 ## Changelog
 - 15 Apr 2026: add single threaded client
