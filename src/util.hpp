@@ -20,7 +20,7 @@ bool receive_one_command(int client_fd, Buffer &buf)
             buf.increase_capacity();
 
         // Receive bytes
-        int num_bytes = recv(client_fd, buf.get_write_pointer(), buf.get_free_space(), 0);
+        int num_bytes = recv(client_fd, buf.get_write_pointer(), buf.get_free_bytes(), 0);
 
         // If the client closes, then number of bytes received would be 0
         if (num_bytes == 0)

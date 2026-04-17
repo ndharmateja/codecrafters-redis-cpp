@@ -14,7 +14,15 @@ Buffer::Buffer(size_t initial_size)
 // Instance methods
 size_t Buffer::get_read_pos() const { return read_pos; }
 size_t Buffer::get_write_pos() const { return write_pos; }
-size_t Buffer::get_free_space() const { return buffer.size() - write_pos; }
+size_t Buffer::get_free_bytes() const { return buffer.size() - write_pos; }
+
+unsigned char Buffer::get_curr_char() const
+{
+    if (curr_pos >= write_pos)
+        throw std::domain_error("Current position is greater than write position");
+    return buffer[curr_pos];
+}
+
 bool Buffer::is_full() const { return write_pos == buffer.size(); }
 
 unsigned char *Buffer::get_write_pointer() { return buffer.data() + write_pos; }

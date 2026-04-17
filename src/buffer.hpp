@@ -24,11 +24,11 @@ public:
     size_t get_read_pos() const;
     size_t get_curr_pos() const { return curr_pos; }
     size_t get_write_pos() const;
-    unsigned char get_curr_char() const { return buffer[curr_pos]; }
+    unsigned char get_curr_char() const;
 
     // Instance methods about space
-    size_t get_free_space() const;
-    size_t has_enough_bytes(size_t num_bytes) const { return buffer.size() - write_pos >= num_bytes; }
+    size_t get_free_bytes() const;
+    size_t has_free_bytes(size_t num_bytes) const { return buffer.size() - write_pos >= num_bytes; }
     bool is_full() const;
 
     // Instance methods about pointers
