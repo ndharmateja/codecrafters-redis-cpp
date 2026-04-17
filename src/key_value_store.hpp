@@ -6,6 +6,21 @@
 #include <string>
 #include <optional>
 
+typedef std::chrono::steady_clock::time_point timestamp;
+
+class RedisValueObject
+{
+private:
+    std::string value;
+    std::optional<timestamp> expiry_time;
+
+public:
+    RedisValueObject(std::string value, std::optional<timestamp> expiry)
+        : value{value}, expiry_time{expiry} {}
+    std::string get_value() const { return value; }
+    std::optional<timestamp> get_expiry_time() const { return expiry_time; };
+};
+
 /**
  * We can use the singleton pattern for the KeyValueStore class as there is only going
  * to be one instance of this class throughout the lifetime of the program
@@ -17,7 +32,7 @@ class KeyValueStore
     // in the future we expand it for lists etc
     // Which is why we are encapsulating in a DB class
 private:
-    std::unordered_map<std::string, std::string> map;
+    std::unordered_map<std::string, RedisValueObject> map;
 
     // We make the mutex mutable so that we can use const getters
     // even though we are technically changing the mutex during the get
