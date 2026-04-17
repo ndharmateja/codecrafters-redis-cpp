@@ -25,15 +25,17 @@ public:
         key = command_parts[1];
         value = command_parts[2];
 
-        // parse EX or PX args
         if (command_parts.size() == 3)
         {
             expiry_in_ms = std::nullopt;
             return;
         }
 
+        // parse EX or PX args
         // Only support EX or PX now
-        if (!strcasecmp("EX", command_parts[3].c_str()) && !strcasecmp("PX", command_parts[3].c_str()))
+        bool is_ex = strcasecmp("EX", command_parts[3].c_str()) == 0;
+        bool is_px = strcasecmp("PX", command_parts[3].c_str()) == 0;
+        if (!is_ex && !is_px)
             throw InvalidCommandStructureError("SET only supports EX/PX args.");
 
         // parse the number
@@ -50,7 +52,7 @@ public:
             throw InvalidCommandStructureError("Expiry time must be a positive integer.");
 
         // If EX, then multiply the time by 1000 to get it in ms
-        if (strcasecmp("EX", command_parts[3].c_str()))
+        if (is_ex)
             expiry_in_ms = expiry_in_ms.value() * 1000;
     }
 
