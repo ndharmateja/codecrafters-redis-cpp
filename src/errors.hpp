@@ -26,7 +26,7 @@ public:
 class BufferOutOfBoundsError : public RedisError
 {
 public:
-    BufferOutOfBoundsError() : RedisError("Client connection error.") {}
+    BufferOutOfBoundsError() : RedisError("Buffer out of bounds error.") {}
 };
 
 class InvalidCommandStructureError : public RedisError
