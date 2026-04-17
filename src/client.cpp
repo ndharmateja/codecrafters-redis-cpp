@@ -6,6 +6,7 @@
 #include "response.hpp"
 #include "key_value_store.hpp"
 #include "command_parser.hpp"
+#include "errors.hpp"
 
 // Constructor and destructor
 Client::Client(int client_fd) : fd{client_fd}, buf{1024} {}
@@ -107,10 +108,9 @@ bool Client::receive_bytes()
         return false;
 
     // If the num bytes is -1, there is an error
-    // TODO: error handling
     // For now we are returning an empty command
     if (num_bytes < 0)
-        throw std::domain_error("Client connection error.");
+        throw ClientConnectionError();
 
     // If the num_bytes > 0, we received some bytes. so we update write_pos
     buf.increment_write_pos(num_bytes);
