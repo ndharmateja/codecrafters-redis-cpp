@@ -20,13 +20,20 @@ class CommandParseError : public RedisError
 {
 public:
     explicit CommandParseError(const std::string &msg)
-        : RedisError("Protocol Error: " + msg) {}
+        : RedisError(msg) {}
 };
 
 class InvalidCommandStructureError : public RedisError
 {
 public:
     explicit InvalidCommandStructureError(const std::string &msg)
+        : RedisError(msg) {}
+};
+
+class WrongTypeError : public RedisError
+{
+public:
+    explicit WrongTypeError(const std::string &msg)
         : RedisError(msg) {}
 };
 
