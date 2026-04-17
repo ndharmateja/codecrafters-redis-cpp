@@ -25,6 +25,7 @@ public:
     size_t get_curr_pos() const { return curr_pos; }
     size_t get_write_pos() const;
     size_t get_free_space() const;
+    size_t has_enough_bytes(size_t num_bytes) const { return write_pos - read_pos >= num_bytes; }
     bool is_full() const;
     unsigned char *get_write_pointer();
     unsigned char *get_pointer(size_t index);
