@@ -13,6 +13,7 @@
 
 class CommandFactory
 {
+public:
     static std::unique_ptr<Command> create_command(const std::vector<std::string> &command_parts)
     {
         // Handle PING command
