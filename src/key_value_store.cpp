@@ -55,7 +55,7 @@ void KeyValueStore::set_value(const std::string &key, const std::string &value, 
     // Create the new value and assign it to the key
     // This will *copy* the value
     // This will overwrite the value (even if it were a list)
-    // TODO: move semantics
+    // TODO: move semantics using std::move to avoid copying
     db_map.insert_or_assign(key, RedisValueObject(value, expiry));
 
     // The mutex is automatically unlocked here (RAII)
