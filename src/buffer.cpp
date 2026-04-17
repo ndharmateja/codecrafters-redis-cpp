@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cstring>
 #include "buffer.hpp"
+#include "errors.hpp"
 
 // Constants
 const size_t Buffer::MIN_CAPACITY = 1024;
@@ -14,7 +15,7 @@ Buffer::Buffer(size_t initial_size)
 unsigned char Buffer::get_curr_char() const
 {
     if (curr_pos >= write_pos)
-        throw std::domain_error("Current position is greater than write position");
+        throw BufferOutOfBoundsError();
     return buffer[curr_pos];
 }
 
