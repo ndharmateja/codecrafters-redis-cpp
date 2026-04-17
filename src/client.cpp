@@ -78,7 +78,7 @@ void Client::run()
     }
 }
 
-void Client::receive_bytes()
+bool Client::receive_bytes()
 {
     // If there aren't atleast 128 bytes we first try and compact it, otherwise we resize it
     if (!buf.has_free_bytes(128))
@@ -95,9 +95,8 @@ void Client::receive_bytes()
     int num_bytes = recv(fd, buf.get_write_pointer(), buf.get_free_bytes(), 0);
 
     // If the client closes, then number of bytes received would be 0
-    // TODO: add a custom error
     if (num_bytes == 0)
-        throw std::domain_error("Client connection closed.");
+        return false;
 
     // If the num bytes is -1, there is an error
     // TODO: error handling
@@ -107,4 +106,5 @@ void Client::receive_bytes()
 
     // If the num_bytes > 0, we received some bytes. so we update write_pos
     buf.increment_write_pos(num_bytes);
+    return true;
 }

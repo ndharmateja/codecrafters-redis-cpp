@@ -20,7 +20,7 @@ public:
 
     // Instance methods
     void run();
-    void receive_bytes();
+    bool receive_bytes();
 };
 
 #endif
