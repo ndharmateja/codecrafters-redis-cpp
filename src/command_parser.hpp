@@ -25,7 +25,7 @@ public:
      * Validates and returns if there is atleast one valid command in the
      * buffer starting at its read_pos.
      *
-     * throws error if the format is invalid
+     * throws CommandParseError if the format is invalid
      */
     static bool has_one_command(Buffer &buf);
 };
