@@ -33,7 +33,7 @@ public:
         }
 
         // Only support EX or PX now
-        if (!strcasecmp("EX", command_parts[3].c_str()) || !strcasecmp("PX", command_parts[3].c_str()))
+        if (!strcasecmp("EX", command_parts[3].c_str()) && !strcasecmp("PX", command_parts[3].c_str()))
             throw InvalidCommandStructureError("SET only supports EX/PX args.");
 
         // parse the number
