@@ -5,6 +5,7 @@
 #include "util.hpp"
 #include "response.hpp"
 #include "key_value_store.hpp"
+#include "command_parser.hpp"
 
 // Constructor and destructor
 Client::Client(int client_fd) : fd{client_fd}, buf{1024} {}
@@ -15,13 +16,20 @@ void Client::run()
     // Handle commands indefinitely
     while (true)
     {
-        // If receive_one_command returns false, it means that either there is an error
-        // or the client closed the connection
-        if (!receive_one_command(fd, buf))
-            break;
+        // If a full command isn't present in the buffer, we keep receiving more
+        // bytes until there is one command in the buffer.
+        // If there is an error while receiving bytes from the client, the receive_bytes
+        // will throw an error and if the client closes the connection, we exit run.
+        // If the command structure is invalid, has_one_command throws an error
+        while (!CommandParser::has_one_command(buf))
+            // If receive_bytes returns false, it means that client closed the connection
+            // in which case we can exit the run method
+            if (!receive_bytes())
+                return;
 
+        // At this point there is atleast one valid full command in the buffer
         // Parse the command
-        std::vector<std::string> command = parse_command(buf);
+        std::vector<std::string> command = CommandParser::parse_command(buf);
 
         // Print the command received
         std::cout << "Command: ";
