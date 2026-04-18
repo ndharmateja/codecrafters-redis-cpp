@@ -11,6 +11,7 @@
 #include "rpush_command.hpp"
 #include "lpush_command.hpp"
 #include "lrange_command.hpp"
+#include "llen_command.hpp"
 #include "invalid_command.hpp"
 #include "echo_command.hpp"
 
@@ -47,6 +48,10 @@ public:
         // Handle LRANGE command
         else if (command_parts.front() == "lrange")
             return std::make_unique<LrangeCommand>(command_parts);
+
+        // Handle LLEN command
+        else if (command_parts.front() == "llen")
+            return std::make_unique<LlenCommand>(command_parts);
 
         // All other commands are unsupported
         else
