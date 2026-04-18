@@ -38,7 +38,10 @@ public:
         KeyValueStore &store = KeyValueStore::get_instance();
 
         // Get the length of the list corresponding to the key and return
-        return Response::create_array_of_bulk_strings(store.pop_front_list_values(key, num_values));
+        std::deque<std::string> popped = store.pop_front_list_values(key, num_values);
+        return popped.size() == 1
+                   ? Response::create_bulk_string(popped.front())
+                   : Response::create_array_of_bulk_strings(popped);
     }
 };
 
