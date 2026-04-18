@@ -62,9 +62,9 @@ void KeyValueStore::set_value(const std::string &key, const std::string &value, 
     // In all cases of error, key found and not found
 }
 
-int KeyValueStore::push_back_list_value(const std::string &key,
-                                        const std::string &value,
-                                        std::optional<long long> expiry_in_ms)
+int KeyValueStore::push_back_list_values(const std::string &key,
+                                         const std::deque<std::string> &values,
+                                         std::optional<long long> expiry_in_ms)
 {
     // Store the expiry time as a timestamp
     std::optional<timestamp> expiry;
@@ -83,11 +83,11 @@ int KeyValueStore::push_back_list_value(const std::string &key,
     if ((it == db_map.end()))
     {
         // Create the new deque
-        std::deque<std::string> new_list = {value};
+        std::deque<std::string> new_list{values};
 
         // Emplace the new value and return 1 which is the length of the new list
         db_map.emplace(key, RedisValueObject(new_list, expiry));
-        return 1;
+        return new_list.size();
     }
 
     // If the key exists and it has expired, we do the same thing
@@ -95,7 +95,7 @@ int KeyValueStore::push_back_list_value(const std::string &key,
     if (redis_value.has_expiry() && redis_value.has_expired())
     {
         // Create the new deque
-        std::deque<std::string> new_list = {value};
+        std::deque<std::string> new_list{values};
         it->second = redis_value;
 
         // we return 1 as it is the length of the new list
@@ -107,7 +107,8 @@ int KeyValueStore::push_back_list_value(const std::string &key,
     auto *list_ptr = std::get_if<std::deque<std::string>>(&redis_value.get_data_mutable());
     if (list_ptr)
     {
-        list_ptr->push_back(value);
+        for (const auto &value : values)
+            list_ptr->push_back(value);
 
         // Return the new size of the list
         return list_ptr->size();

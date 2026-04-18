@@ -77,9 +77,9 @@ public:
                    std::optional<long long> expiry_in_ms);
 
     // List methods
-    int push_back_list_value(const std::string &key,
-                             const std::string &value,
-                             std::optional<long long> expiry_in_ms = std::nullopt);
+    int push_back_list_values(const std::string &key,
+                              const std::deque<std::string> &values,
+                              std::optional<long long> expiry_in_ms = std::nullopt);
 };
 
 #endif
