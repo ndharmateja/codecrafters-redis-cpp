@@ -120,3 +120,60 @@ int KeyValueStore::push_back_list_values(const std::string &key,
     // The mutex is automatically unlocked here (RAII)
     // In all cases of error, key found and not found
 }
+
+std::deque<std::string> KeyValueStore::get_list_values(const std::string &key, int start, int stop)
+{
+    // Lock mutex
+    std::lock_guard<std::mutex> lock(db_mutex);
+
+    // Find and return the corresponding value if key exists
+    // If key doesn't exist, return nullopt
+    auto it = db_map.find(key);
+    if (it == db_map.end())
+        return std::deque<std::string>(0);
+
+    // If expired, we delete the value from the db and return nullopt
+    const RedisValueObject &value = it->second;
+    if (value.has_expiry() && value.has_expired())
+    {
+        db_map.erase(it);
+        return std::deque<std::string>(0);
+    }
+
+    // Type check for list and return
+    auto *list_ptr = std::get_if<std::deque<std::string>>(&value.get_data());
+    if (list_ptr)
+    {
+        // Convert start and stop indices to positive values
+        int num_elements = list_ptr->size();
+        if (start < 0)
+            start += num_elements;
+        if (stop < 0)
+            stop += num_elements;
+
+        // Slice the deque from [start:stop]
+        // If start >= num_elements, empty list needs to be returned
+        if (start >= num_elements)
+            return std::deque<std::string>(0);
+
+        // If stop >= num_elements, stop must be considered as the last element
+        if (stop >= num_elements)
+            stop = num_elements - 1;
+
+        // If start > stop, empty list needs to be returned
+        if (start > stop)
+            return std::deque<std::string>(0);
+
+        // Slice the list
+        // We need (stop + 1) as stop is inclusive
+        return std::deque<std::string>(
+            list_ptr->begin() + start,
+            list_ptr->begin() + (stop + 1));
+    }
+
+    // If list_ptr is nullptr it means that it is not of a list value
+    throw WrongTypeError("Not a list value.");
+
+    // The mutex is automatically unlocked here (RAII)
+    // In all cases of error, key found and not found
+}
