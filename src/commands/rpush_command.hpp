@@ -1,7 +1,6 @@
 #ifndef RPUSH_COMMAND_HPP
 #define RPUSH_COMMAND_HPP
 
-#include <optional>
 #include <vector>
 #include <deque>
 #include "command.hpp"

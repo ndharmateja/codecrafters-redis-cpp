@@ -1,7 +1,6 @@
 #ifndef LRANGE_COMMAND_HPP
 #define LRANGE_COMMAND_HPP
 
-#include <optional>
 #include <vector>
 #include <strings.h>
 #include "command.hpp"

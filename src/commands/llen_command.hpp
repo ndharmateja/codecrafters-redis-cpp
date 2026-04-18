@@ -1,9 +1,7 @@
 #ifndef LLEN_COMMAND_HPP
 #define LLEN_COMMAND_HPP
 
-#include <optional>
 #include <vector>
-#include <deque>
 #include "command.hpp"
 #include "../key_value_store.hpp"
 #include "../response.hpp"

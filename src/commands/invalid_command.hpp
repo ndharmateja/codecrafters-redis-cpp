@@ -1,7 +1,6 @@
 #ifndef INVALID_COMMAND_HPP
 #define INVALID_COMMAND_HPP
 
-#include <vector>
 #include <string>
 #include "command.hpp"
 #include "../response.hpp"

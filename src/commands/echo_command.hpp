@@ -2,7 +2,6 @@
 #define ECHO_COMMAND_HPP
 
 #include <vector>
-#include <string>
 #include "../response.hpp"
 #include "../errors.hpp"
 #include "command.hpp"
