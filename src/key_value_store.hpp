@@ -80,6 +80,7 @@ public:
     int push_back_list_values(const std::string &key,
                               const std::deque<std::string> &values,
                               std::optional<long long> expiry_in_ms = std::nullopt);
+    std::deque<std::string> get_list_values(const std::string &key, int start = 0, int stop = -1);
 };
 
 #endif
