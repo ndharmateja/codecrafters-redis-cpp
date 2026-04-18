@@ -95,6 +95,7 @@ public:
                                const std::deque<std::string> &values) { return push_list_values(key, values, Side::Front); }
     std::deque<std::string> get_list_values(const std::string &key, int start = 0, int stop = -1);
     int get_list_length(const std::string &key);
+    std::deque<std::string> pop_front_list_values(const std::string &key, int num_values_to_pop = 1);
 };
 
 #endif

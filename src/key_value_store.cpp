@@ -55,7 +55,6 @@ void KeyValueStore::set_value(const std::string &key, const std::string &value, 
     // Create the new value and assign it to the key
     // This will *copy* the value
     // This will overwrite the value (even if it were a list)
-    // TODO: move semantics using std::move to avoid copying
     db_map.insert_or_assign(key, RedisValueObject(value, expiry));
 
     // The mutex is automatically unlocked here (RAII)
@@ -184,6 +183,58 @@ int KeyValueStore::get_list_length(const std::string &key)
     auto *list_ptr = std::get_if<std::deque<std::string>>(&value.get_data());
     if (list_ptr)
         return list_ptr->size();
+
+    // If list_ptr is nullptr it means that it is not of a list value
+    throw WrongTypeError("Not a list value.");
+
+    // The mutex is automatically unlocked here (RAII)
+    // In all cases of error, key found and not found
+}
+
+std::deque<std::string> KeyValueStore::pop_front_list_values(const std::string &key, int num_values_to_pop = 1)
+{
+    // Lock mutex
+    std::lock_guard<std::mutex> lock(db_mutex);
+
+    // Find the corresponding value if key exists
+    // If key doesn't exist, return empty deque
+    auto it = db_map.find(key);
+    if (it == db_map.end())
+        return std::deque<std::string>(0);
+
+    // Type check for list and return
+    RedisValueObject &value = it->second;
+    auto *list_ptr = std::get_if<std::deque<std::string>>(&value.get_data_mutable());
+    if (list_ptr)
+    {
+        // Result for storing the popped elements
+        std::deque<std::string> result;
+        int num_elements = list_ptr->size();
+
+        // If the num_values to delete >= the number of elements in the list
+        // we return the whole list and we can delete the key
+        if (num_values_to_pop >= num_elements)
+        {
+            result = *list_ptr;
+            db_map.erase(it);
+        }
+
+        // If the num_values to delete < number of elements in the list
+        // we can slice the list and remove them from the list
+        else
+        {
+            // Create teh sliced deque
+            result = std::deque<std::string>(
+                list_ptr->begin(),
+                list_ptr->begin() + num_values_to_pop);
+
+            // Remove those elements from the original deque
+            list_ptr->erase(list_ptr->begin(), list_ptr->begin() + num_values_to_pop);
+        }
+
+        // Return the list of removed elements
+        return result;
+    }
 
     // If list_ptr is nullptr it means that it is not of a list value
     throw WrongTypeError("Not a list value.");
