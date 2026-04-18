@@ -2,6 +2,7 @@
 #define RESPONSE_HPP
 
 #include <string>
+#include <deque>
 
 class Response
 {
@@ -41,6 +42,21 @@ public:
         std::string response{":"};
         return add_item(response, x);
     };
+
+    static std::string create_array_of_bulk_strings(std::deque<std::string> values)
+    {
+        std::string response("*");
+        add_item(response, values.size());
+
+        for (const auto &value : values)
+        {
+            response.append("$");
+            add_item(response, value.length());
+            add_item(response, value);
+        }
+
+        return response;
+    }
 };
 
 #endif
