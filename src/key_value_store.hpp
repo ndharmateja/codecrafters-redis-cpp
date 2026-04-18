@@ -20,6 +20,7 @@ private:
 public:
     RedisValueObject(RedisData value, std::optional<timestamp> expiry)
         : data{value}, expiry_time{expiry} {}
+    RedisValueObject(RedisData value) : data{value} {}
 
     RedisData &get_data_mutable() { return data; }
     const RedisData &get_data() const { return data; }
@@ -78,8 +79,7 @@ public:
 
     // List methods
     int push_back_list_values(const std::string &key,
-                              const std::deque<std::string> &values,
-                              std::optional<long long> expiry_in_ms = std::nullopt);
+                              const std::deque<std::string> &values);
     std::deque<std::string> get_list_values(const std::string &key, int start = 0, int stop = -1);
 };
 

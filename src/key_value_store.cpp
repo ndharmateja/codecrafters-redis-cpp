@@ -63,15 +63,8 @@ void KeyValueStore::set_value(const std::string &key, const std::string &value, 
 }
 
 int KeyValueStore::push_back_list_values(const std::string &key,
-                                         const std::deque<std::string> &values,
-                                         std::optional<long long> expiry_in_ms)
+                                         const std::deque<std::string> &values)
 {
-    // Store the expiry time as a timestamp
-    std::optional<timestamp> expiry;
-    if (expiry_in_ms.has_value())
-        // 2. Add duration to current time
-        expiry = std::chrono::steady_clock::now() + std::chrono::milliseconds(*expiry_in_ms);
-
     // Lock mutex
     std::lock_guard<std::mutex> lock(db_mutex);
 
@@ -86,24 +79,12 @@ int KeyValueStore::push_back_list_values(const std::string &key,
         std::deque<std::string> new_list{values};
 
         // Emplace the new value and return 1 which is the length of the new list
-        db_map.emplace(key, RedisValueObject(new_list, expiry));
+        db_map.emplace(key, RedisValueObject(new_list));
         return new_list.size();
     }
 
-    // If the key exists and it has expired, we do the same thing
+    // The key exists, so we check the type
     RedisValueObject &redis_value = it->second;
-    if (redis_value.has_expiry() && redis_value.has_expired())
-    {
-        // Create the new deque
-        std::deque<std::string> new_list{values};
-        it->second = redis_value;
-
-        // we return 1 as it is the length of the new list
-        return 1;
-    }
-
-    // At this point the key exists and has not expired or doesn't have expiry
-    // so we check the type
     auto *list_ptr = std::get_if<std::deque<std::string>>(&redis_value.get_data_mutable());
     if (list_ptr)
     {
@@ -132,15 +113,8 @@ std::deque<std::string> KeyValueStore::get_list_values(const std::string &key, i
     if (it == db_map.end())
         return std::deque<std::string>(0);
 
-    // If expired, we delete the value from the db and return nullopt
-    const RedisValueObject &value = it->second;
-    if (value.has_expiry() && value.has_expired())
-    {
-        db_map.erase(it);
-        return std::deque<std::string>(0);
-    }
-
     // Type check for list and return
+    const RedisValueObject &value = it->second;
     auto *list_ptr = std::get_if<std::deque<std::string>>(&value.get_data());
     if (list_ptr)
     {
