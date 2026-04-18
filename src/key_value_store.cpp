@@ -191,7 +191,7 @@ int KeyValueStore::get_list_length(const std::string &key)
     // In all cases of error, key found and not found
 }
 
-std::deque<std::string> KeyValueStore::pop_front_list_values(const std::string &key, int num_values_to_pop = 1)
+std::deque<std::string> KeyValueStore::pop_front_list_values(const std::string &key, int num_values_to_pop)
 {
     // Lock mutex
     std::lock_guard<std::mutex> lock(db_mutex);
