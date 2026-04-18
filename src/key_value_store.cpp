@@ -167,3 +167,27 @@ std::deque<std::string> KeyValueStore::get_list_values(const std::string &key, i
     // The mutex is automatically unlocked here (RAII)
     // In all cases of error, key found and not found
 }
+
+int KeyValueStore::get_list_length(const std::string &key)
+{
+    // Lock mutex
+    std::lock_guard<std::mutex> lock(db_mutex);
+
+    // Find and return the corresponding value if key exists
+    // If key doesn't exist, return 0
+    auto it = db_map.find(key);
+    if (it == db_map.end())
+        return 0;
+
+    // If key exists, type check for list and return
+    const RedisValueObject &value = it->second;
+    auto *list_ptr = std::get_if<std::deque<std::string>>(&value.get_data());
+    if (list_ptr)
+        return list_ptr->size();
+
+    // If list_ptr is nullptr it means that it is not of a list value
+    throw WrongTypeError("Not a list value.");
+
+    // The mutex is automatically unlocked here (RAII)
+    // In all cases of error, key found and not found
+}
