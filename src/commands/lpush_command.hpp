@@ -38,7 +38,7 @@ public:
 
         // If value exists, we send that corresponding value otherwise
         // we send the null string back
-        return Response::create_integer_string(store.push_back_list_values(key, values));
+        return Response::create_integer_string(store.push_front_list_values(key, values));
     }
 };
 
