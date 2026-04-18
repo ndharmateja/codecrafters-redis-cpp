@@ -144,8 +144,14 @@ std::deque<std::string> KeyValueStore::get_list_values(const std::string &key, i
     auto *list_ptr = std::get_if<std::deque<std::string>>(&value.get_data());
     if (list_ptr)
     {
-        // Convert start and stop indices to positive values
         int num_elements = list_ptr->size();
+        // If a negative index is out of range, we treat it as 0
+        if (start < -num_elements)
+            start = 0;
+        if (stop < -num_elements)
+            stop = 0;
+
+        // Convert start and stop indices to positive values
         if (start < 0)
             start += num_elements;
         if (stop < 0)
