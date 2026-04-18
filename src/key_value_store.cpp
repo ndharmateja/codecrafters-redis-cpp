@@ -62,8 +62,16 @@ void KeyValueStore::set_value(const std::string &key, const std::string &value, 
     // In all cases of error, key found and not found
 }
 
-int KeyValueStore::push_back_list_values(const std::string &key,
-                                         const std::deque<std::string> &values)
+void KeyValueStore::push_value(std::deque<std::string> &values, const std::string &value, Side side)
+{
+    if (side == Side::Front)
+        values.push_front(value);
+    else
+        values.push_back(value);
+}
+
+int KeyValueStore::push_list_values(const std::string &key,
+                                    const std::deque<std::string> &values, Side side)
 {
     // Lock mutex
     std::lock_guard<std::mutex> lock(db_mutex);
@@ -76,7 +84,9 @@ int KeyValueStore::push_back_list_values(const std::string &key,
     if ((it == db_map.end()))
     {
         // Create the new deque
-        std::deque<std::string> new_list{values};
+        std::deque<std::string> new_list;
+        for (const auto &value : values)
+            push_value(new_list, value, side);
 
         // Emplace the new value and return 1 which is the length of the new list
         db_map.emplace(key, RedisValueObject(new_list));
@@ -89,14 +99,14 @@ int KeyValueStore::push_back_list_values(const std::string &key,
     if (list_ptr)
     {
         for (const auto &value : values)
-            list_ptr->push_back(value);
+            push_value(*list_ptr, value, side);
 
         // Return the new size of the list
         return list_ptr->size();
     }
 
     // If we reach here it means that the value is not of list type
-    throw WrongTypeError("Not a string value.");
+    throw WrongTypeError("Not a list value.");
 
     // The mutex is automatically unlocked here (RAII)
     // In all cases of error, key found and not found

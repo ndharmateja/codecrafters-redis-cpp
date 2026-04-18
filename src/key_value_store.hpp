@@ -11,6 +11,12 @@
 typedef std::chrono::steady_clock::time_point timestamp;
 typedef std::variant<std::string, std::deque<std::string>> RedisData;
 
+enum class Side
+{
+    Front,
+    Back
+};
+
 class RedisValueObject
 {
 private:
@@ -65,6 +71,11 @@ private:
     KeyValueStore(const KeyValueStore &) = delete;
     KeyValueStore &operator=(const KeyValueStore &) = delete;
 
+    // Helper methods
+    int push_list_values(const std::string &key,
+                         const std::deque<std::string> &values, Side side);
+    static void push_value(std::deque<std::string> &values, const std::string &value, Side side);
+
 public:
     // static method for singleton pattern
     static KeyValueStore &get_instance();
@@ -79,7 +90,9 @@ public:
 
     // List methods
     int push_back_list_values(const std::string &key,
-                              const std::deque<std::string> &values);
+                              const std::deque<std::string> &values) { return push_list_values(key, values, Side::Back); }
+    int push_front_list_values(const std::string &key,
+                               const std::deque<std::string> &values) { return push_list_values(key, values, Side::Front); }
     std::deque<std::string> get_list_values(const std::string &key, int start = 0, int stop = -1);
 };
 
