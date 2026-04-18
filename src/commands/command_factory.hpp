@@ -9,6 +9,7 @@
 #include "set_command.hpp"
 #include "get_command.hpp"
 #include "rpush_command.hpp"
+#include "lrange_command.hpp"
 #include "invalid_command.hpp"
 #include "echo_command.hpp"
 
@@ -37,6 +38,10 @@ public:
         // Handle RPUSH command
         else if (command_parts.front() == "rpush")
             return std::make_unique<RpushCommand>(command_parts);
+
+        // Handle LRANGE command
+        else if (command_parts.front() == "lrange")
+            return std::make_unique<LrangeCommand>(command_parts);
 
         // All other commands are unsupported
         else
