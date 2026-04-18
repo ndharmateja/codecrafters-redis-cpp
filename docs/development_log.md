@@ -30,6 +30,9 @@
 - [x] error flow when client connection closes or error. bool or throw. custom errors.
 - [ ] send might not send all bytes. sendall to loop and send all the bytes.
 - [ ] remove expiry checking for list commands get and set
+- [ ] performance improvements:
+    - std::move instead of copying, especially in key value store
+    - instead of pushing one value at a time, push all and reverse (for lpush command)
 
 ## Changelog
 - 15 Apr 2026: add single threaded client
